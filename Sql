@@ -1,0 +1,27 @@
+import csv
+
+# CSV file path
+csv_file = 'transactions.csv'
+
+# SQL file to write INSERT statements
+sql_file = 'insert_transactions.sql'
+
+# Table name
+table_name = 'transactions'
+
+# Open CSV file and SQL file for writing
+with open(csv_file, 'r', newline='', encoding='utf-8-sig') as csvfile, open(sql_file, 'w') as sqlfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        try:
+            # Generate INSERT statement
+            sql_insert = f"INSERT INTO {table_name} (transaction_id, transaction_date, transaction_time, transaction_qty, store_id, store_location, product_id, unit_price, product_category, product_type, product_detail) VALUES ("
+            sql_insert += f"{row['transaction_id']}, '{row['transaction_date']}', '{row['transaction_time']}', {row['transaction_qty']}, {row['store_id']}, '{row['store_location']}', {row['product_id']}, {row['unit_price']}, '{row['product_category']}', '{row['product_type']}', '{row['product_detail']}');\n"
+            
+            # Write INSERT statement to SQL file
+            sqlfile.write(sql_insert)
+
+        except KeyError as e:
+            print(f"KeyError: {e} - Skipping row: {row}")
+
+print("SQL insert commands generated successfully.")
